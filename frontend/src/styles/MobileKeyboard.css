@@ -1,0 +1,183 @@
+.mobile-keyboard {
+  background-color: #2d2d2d;
+  border-top: 2px solid #00ff00;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.mobile-keyboard.collapsed {
+  max-height: 44px;
+}
+
+.keyboard-toggle {
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  color: #00ff00;
+  font-size: 14px;
+}
+
+.keyboard-toggle:active {
+  background-color: #3d3d3d;
+}
+
+.keyboard-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.keyboard-row.commands {
+  gap: 4px;
+}
+
+.key {
+  background-color: #3d3d3d;
+  color: #ffffff;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  flex: 1;
+  min-width: 0;
+}
+
+.key:active {
+  background-color: #00ff00;
+  color: #000000;
+  transform: scale(0.95);
+  border-color: #00ff00;
+}
+
+.key.small {
+  flex: 0 0 calc(12.5% - 6px);
+  min-width: 36px;
+}
+
+.key.normal {
+  flex: 0 0 calc(25% - 6px);
+  min-width: 60px;
+}
+
+.key.wide {
+  flex: 0 0 calc(50% - 6px);
+  min-width: 120px;
+}
+
+.key.command {
+  flex: 0 0 calc(33.333% - 4px);
+  min-width: 50px;
+  font-size: 12px;
+  padding: 8px;
+}
+
+.key.modifier {
+  background-color: #4d4d4d;
+  color: #ffaa00;
+  font-weight: 700;
+}
+
+.key.modifier.active {
+  background-color: #ffaa00;
+  color: #000000;
+  border-color: #ffaa00;
+  animation: pulse-modifier 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse-modifier {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.modifier-indicator {
+  background-color: #ffaa00;
+  color: #000000;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  animation: pulse-indicator 1s ease-in-out infinite;
+}
+
+@keyframes pulse-indicator {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Optimización para pantallas pequeñas */
+@media (max-width: 360px) {
+  .key {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .key.command {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .keyboard-content {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .keyboard-row {
+    gap: 4px;
+  }
+}
+
+/* Tablets y pantallas grandes */
+@media (min-width: 768px) {
+  .key {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .key.command {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .keyboard-content {
+    padding: 16px;
+    gap: 10px;
+  }
+
+  .keyboard-row {
+    gap: 8px;
+  }
+}
+
+/* Ocultar teclado en desktop si hay suficiente espacio */
+@media (min-width: 1024px) and (min-height: 768px) {
+  .mobile-keyboard {
+    display: none;
+  }
+}

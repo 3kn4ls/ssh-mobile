@@ -1,0 +1,8 @@
+PLACEHOLDER: Reemplazar con logo192.png (192x192 pixels)
+
+Para generar los iconos:
+1. Usar el archivo icon-base.svg en este directorio
+2. Ejecutar: ../../scripts/generate-icons.sh
+3. O usar herramientas online como https://favicon.io/
+
+El icono debe ser cuadrado con el tema verde/negro de SSH Mobile.
