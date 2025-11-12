@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/MobileKeyboard.css';
 
-const MobileKeyboard = ({ onKeyPress }) => {
+const MobileKeyboard = ({ onKeyPress, onScrollToBottom, onScrollToTop }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeModifier, setActiveModifier] = useState(null);
 
@@ -72,6 +72,34 @@ const MobileKeyboard = ({ onKeyPress }) => {
 
       {isExpanded && (
         <div className="keyboard-content">
+          {/* Fila 0: Controles de scroll (nuevo) */}
+          <div className="keyboard-row scroll-controls">
+            <button
+              className="key scroll-control"
+              onClick={() => {
+                if (onScrollToTop) {
+                  onScrollToTop();
+                  if ('vibrate' in navigator) navigator.vibrate(15);
+                }
+              }}
+              title="Ir al inicio"
+            >
+              ⇈ Inicio
+            </button>
+            <button
+              className="key scroll-control"
+              onClick={() => {
+                if (onScrollToBottom) {
+                  onScrollToBottom();
+                  if ('vibrate' in navigator) navigator.vibrate(15);
+                }
+              }}
+              title="Ir al final"
+            >
+              ⇊ Final
+            </button>
+          </div>
+
           {/* Fila 1: Teclas especiales */}
           <div className="keyboard-row">
             {specialKeys.map((key, index) => (

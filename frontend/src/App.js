@@ -85,6 +85,18 @@ function App() {
     }
   };
 
+  const handleScrollToBottom = () => {
+    if (terminal && terminal.scrollToBottom) {
+      terminal.scrollToBottom();
+    }
+  };
+
+  const handleScrollToTop = () => {
+    if (terminal && terminal.scrollToTop) {
+      terminal.scrollToTop();
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -110,7 +122,11 @@ function App() {
               onDisconnect={handleDisconnect}
               onTerminalReady={setTerminal}
             />
-            <MobileKeyboard onKeyPress={handleKeyPress} />
+            <MobileKeyboard
+              onKeyPress={handleKeyPress}
+              onScrollToBottom={handleScrollToBottom}
+              onScrollToTop={handleScrollToTop}
+            />
           </>
         )}
       </main>

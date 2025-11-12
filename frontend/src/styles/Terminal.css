@@ -4,6 +4,7 @@
   flex-direction: column;
   background-color: #1e1e1e;
   overflow: hidden;
+  position: relative;
 }
 
 .terminal-status {
@@ -59,6 +60,10 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #444 #1e1e1e;
+  /* Mejorar scroll en móviles */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
 }
 
 .terminal .xterm-viewport::-webkit-scrollbar {
@@ -89,9 +94,92 @@
   }
 }
 
+/* Botón flotante para scroll al final */
+.scroll-to-bottom-btn {
+  position: absolute;
+  bottom: 80px;
+  right: 16px;
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+  color: #000000;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 255, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  animation: slideIn 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scroll-to-bottom-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 255, 0, 0.6);
+}
+
+.scroll-icon {
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.scroll-text {
+  font-size: 13px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ocultar texto en pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .scroll-to-bottom-btn {
+    padding: 12px;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+    bottom: 70px;
+    right: 12px;
+  }
+
+  .scroll-text {
+    display: none;
+  }
+
+  .scroll-icon {
+    font-size: 20px;
+  }
+}
+
 /* Optimizar para tablets y desktop */
 @media (min-width: 768px) {
   .terminal {
     padding: 16px;
+  }
+
+  .scroll-to-bottom-btn {
+    bottom: 20px;
+    right: 20px;
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+
+  .scroll-to-bottom-btn:hover {
+    background: linear-gradient(135deg, #00cc00 0%, #00aa00 100%);
+    box-shadow: 0 6px 20px rgba(0, 255, 0, 0.5);
+    transform: translateY(-2px);
   }
 }

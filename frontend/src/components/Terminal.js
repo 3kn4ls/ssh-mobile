@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Terminal as XTerm } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { WebLinksAddon } from 'xterm-addon-web-links';
@@ -13,6 +13,68 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
   const [status, setStatus] = useState('Conectando...');
   const [reconnectAttempt, setReconnectAttempt] = useState(0);
   const pingIntervalRef = useRef(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isAtBottom, setIsAtBottom] = useState(true);
+  const scrollCheckIntervalRef = useRef(null);
+
+  // Función para verificar si el scroll está al final
+  const checkScrollPosition = useCallback(() => {
+    if (!xtermRef.current) return;
+
+    const term = xtermRef.current;
+    const buffer = term.buffer.active;
+    const viewport = term.element?.querySelector('.xterm-viewport');
+
+    if (viewport) {
+      const scrollTop = viewport.scrollTop;
+      const scrollHeight = viewport.scrollHeight;
+      const clientHeight = viewport.clientHeight;
+
+      // Considerar que está al final si está a menos de 50px del final
+      const atBottom = scrollHeight - scrollTop - clientHeight < 50;
+      setIsAtBottom(atBottom);
+      setShowScrollButton(!atBottom);
+    }
+  }, []);
+
+  // Función para hacer scroll al final
+  const scrollToBottom = useCallback(() => {
+    if (!xtermRef.current) return;
+
+    const term = xtermRef.current;
+    term.scrollToBottom();
+
+    // Vibración táctil
+    if ('vibrate' in navigator) {
+      navigator.vibrate(20);
+    }
+
+    setIsAtBottom(true);
+    setShowScrollButton(false);
+  }, []);
+
+  // Función para hacer scroll rápido con animación
+  const smoothScrollToBottom = useCallback(() => {
+    if (!xtermRef.current) return;
+
+    const viewport = xtermRef.current.element?.querySelector('.xterm-viewport');
+    if (viewport) {
+      viewport.scrollTo({
+        top: viewport.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+
+    // Vibración táctil
+    if ('vibrate' in navigator) {
+      navigator.vibrate(20);
+    }
+
+    setTimeout(() => {
+      setIsAtBottom(true);
+      setShowScrollButton(false);
+    }, 300);
+  }, []);
 
   useEffect(() => {
     // Inicializar terminal
@@ -42,10 +104,23 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
     xtermRef.current = term;
     fitAddonRef.current = fitAddon;
 
+    // Monitorear scroll para mostrar/ocultar botón
+    const viewport = term.element?.querySelector('.xterm-viewport');
+    if (viewport) {
+      viewport.addEventListener('scroll', checkScrollPosition);
+
+      // Mejorar el scroll en móviles
+      viewport.style.webkitOverflowScrolling = 'touch';
+      viewport.style.overscrollBehavior = 'contain';
+    }
+
+    // Verificar posición del scroll cada 500ms
+    scrollCheckIntervalRef.current = setInterval(checkScrollPosition, 500);
+
     // Conectar WebSocket
     connectWebSocket();
 
-    // API para enviar teclas especiales
+    // API para enviar teclas especiales y control del terminal
     const terminalAPI = {
       sendKey: (key) => {
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
@@ -53,6 +128,15 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
             type: 'data',
             data: key
           }));
+        }
+      },
+      scrollToBottom: () => scrollToBottom(),
+      scrollToTop: () => {
+        if (xtermRef.current) {
+          xtermRef.current.scrollToTop();
+          if ('vibrate' in navigator) {
+            navigator.vibrate(20);
+          }
         }
       }
     };
@@ -85,12 +169,18 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
       if (pingIntervalRef.current) {
         clearInterval(pingIntervalRef.current);
       }
+      if (scrollCheckIntervalRef.current) {
+        clearInterval(scrollCheckIntervalRef.current);
+      }
+      if (viewport) {
+        viewport.removeEventListener('scroll', checkScrollPosition);
+      }
       if (wsRef.current) {
         wsRef.current.close();
       }
       term.dispose();
     };
-  }, []);
+  }, [checkScrollPosition]);
 
   const connectWebSocket = () => {
     const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:3001';
@@ -119,7 +209,18 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
             break;
 
           case 'data':
+            // Auto-scroll inteligente: solo si ya estabas al final
+            const wasAtBottom = isAtBottom;
             xtermRef.current.write(message.data);
+
+            // Si estabas al final, mantente al final
+            if (wasAtBottom) {
+              setTimeout(() => {
+                if (xtermRef.current) {
+                  xtermRef.current.scrollToBottom();
+                }
+              }, 10);
+            }
             break;
 
           case 'error':
@@ -184,6 +285,18 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
         </span>
       </div>
       <div ref={terminalRef} className="terminal" />
+
+      {/* Botón flotante para scroll rápido al final */}
+      {showScrollButton && (
+        <button
+          className="scroll-to-bottom-btn"
+          onClick={smoothScrollToBottom}
+          title="Ir al final"
+        >
+          <span className="scroll-icon">↓</span>
+          <span className="scroll-text">Ir al final</span>
+        </button>
+      )}
     </div>
   );
 };
