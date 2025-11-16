@@ -48,9 +48,8 @@ body {
   margin: 0;
 }
 
-.disconnect-btn {
-  background-color: #ff4444;
-  color: white;
+.disconnect-btn,
+.new-connection-btn {
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
@@ -58,11 +57,29 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.disconnect-btn {
+  background-color: #ff4444;
+  color: white;
 }
 
 .disconnect-btn:active {
   background-color: #cc0000;
   transform: scale(0.95);
+}
+
+.new-connection-btn {
+  background-color: #00ff00;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 255, 0, 0.4);
+}
+
+.new-connection-btn:active {
+  background-color: #00cc00;
+  transform: scale(0.95);
+  box-shadow: 0 1px 4px rgba(0, 255, 0, 0.6);
 }
 
 .App-main {
@@ -96,8 +113,18 @@ button:active {
     font-size: 24px;
   }
 
-  .disconnect-btn {
+  .disconnect-btn,
+  .new-connection-btn {
     padding: 10px 20px;
     font-size: 16px;
+  }
+
+  .new-connection-btn:hover {
+    background-color: #00cc00;
+    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.5);
+  }
+
+  .disconnect-btn:hover {
+    background-color: #cc0000;
   }
 }

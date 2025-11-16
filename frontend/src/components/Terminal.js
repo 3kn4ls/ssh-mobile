@@ -138,6 +138,11 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
             navigator.vibrate(20);
           }
         }
+      },
+      disconnect: () => {
+        if (wsRef.current) {
+          wsRef.current.close();
+        }
       }
     };
 
