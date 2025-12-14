@@ -12,6 +12,7 @@ function App() {
   const [savedConnections, setSavedConnections] = useState([]);
   const [showConnectionForm, setShowConnectionForm] = useState(false);
   const [pendingTabId, setPendingTabId] = useState(null);
+  const [isKeyboardExpanded, setIsKeyboardExpanded] = useState(true);
 
   useEffect(() => {
     // Cargar conexiones guardadas
@@ -268,6 +269,7 @@ function App() {
                     connectionParams={tab.connectionParams}
                     onDisconnect={() => handleDisconnect(tab.id)}
                     onTerminalReady={(api) => handleTerminalReady(tab.id, api)}
+                    isKeyboardExpanded={isKeyboardExpanded}
                   />
                 </div>
               )
@@ -278,6 +280,7 @@ function App() {
                 onKeyPress={handleKeyPress}
                 onScrollToBottom={handleScrollToBottom}
                 onScrollToTop={handleScrollToTop}
+                onExpandChange={setIsKeyboardExpanded}
               />
             )}
           </>

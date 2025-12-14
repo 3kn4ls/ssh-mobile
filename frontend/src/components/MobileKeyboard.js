@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
 import '../styles/MobileKeyboard.css';
 
-const MobileKeyboard = ({ onKeyPress, onScrollToBottom, onScrollToTop }) => {
+const MobileKeyboard = ({ onKeyPress, onScrollToBottom, onScrollToTop, onExpandChange }) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeModifier, setActiveModifier] = useState(null);
+
+  const toggleExpanded = () => {
+    const newState = !isExpanded;
+    setIsExpanded(newState);
+    if (onExpandChange) {
+      onExpandChange(newState);
+    }
+  };
 
   const handleKeyPress = (key, vibrate = true) => {
     if (vibrate && 'vibrate' in navigator) {
@@ -66,7 +74,7 @@ const MobileKeyboard = ({ onKeyPress, onScrollToBottom, onScrollToTop }) => {
 
   return (
     <div className={`mobile-keyboard ${isExpanded ? 'expanded' : 'collapsed'}`}>
-      <div className="keyboard-toggle" onClick={() => setIsExpanded(!isExpanded)}>
+      <div className="keyboard-toggle" onClick={toggleExpanded}>
         <span>{isExpanded ? '▼' : '▲'} Teclado SSH</span>
       </div>
 

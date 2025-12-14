@@ -5,7 +5,7 @@ import { WebLinksAddon } from 'xterm-addon-web-links';
 import 'xterm/css/xterm.css';
 import '../styles/Terminal.css';
 
-const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
+const Terminal = ({ connectionParams, onDisconnect, onTerminalReady, isKeyboardExpanded }) => {
   const terminalRef = useRef(null);
   const xtermRef = useRef(null);
   const wsRef = useRef(null);
@@ -16,6 +16,7 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isAtBottom, setIsAtBottom] = useState(true);
   const scrollCheckIntervalRef = useRef(null);
+  const terminalContainerRef = useRef(null);
 
   // Función para verificar si el scroll está al final
   const checkScrollPosition = useCallback(() => {
@@ -187,6 +188,22 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
     };
   }, [checkScrollPosition]);
 
+  // Ajustar terminal cuando el teclado se expande/colapsa
+  useEffect(() => {
+    if (!xtermRef.current || !fitAddonRef.current) return;
+
+    // Ajustar tamaño del terminal
+    setTimeout(() => {
+      fitAddonRef.current.fit();
+
+      // Hacer scroll al final para mostrar el prompt
+      if (xtermRef.current && isAtBottom) {
+        xtermRef.current.scrollToBottom();
+      }
+    }, 100); // Pequeño delay para que el CSS se aplique
+
+  }, [isKeyboardExpanded, isAtBottom]);
+
   const connectWebSocket = () => {
     const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:3001';
     const ws = new WebSocket(wsUrl);
@@ -276,6 +293,16 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
           type: 'data',
           data: data
         }));
+
+        // Hacer scroll al final cuando el usuario escribe
+        // para asegurar que el prompt siempre sea visible
+        setTimeout(() => {
+          if (xtermRef.current) {
+            xtermRef.current.scrollToBottom();
+            setIsAtBottom(true);
+            setShowScrollButton(false);
+          }
+        }, 50);
       }
     });
 
@@ -283,7 +310,10 @@ const Terminal = ({ connectionParams, onDisconnect, onTerminalReady }) => {
   };
 
   return (
-    <div className="terminal-container">
+    <div
+      ref={terminalContainerRef}
+      className={`terminal-container ${isKeyboardExpanded ? 'keyboard-expanded' : 'keyboard-collapsed'}`}
+    >
       <div className="terminal-status">
         <span className={`status-indicator ${status.includes('Conectado') ? 'connected' : ''}`}>
           {status}

@@ -5,6 +5,16 @@
   background-color: #1e1e1e;
   overflow: hidden;
   position: relative;
+  transition: padding-bottom 0.3s ease;
+}
+
+/* Ajustar padding cuando el teclado está expandido para que el prompt sea visible */
+.terminal-container.keyboard-expanded {
+  padding-bottom: 60px;
+}
+
+.terminal-container.keyboard-collapsed {
+  padding-bottom: 0;
 }
 
 .terminal-status {
