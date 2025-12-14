@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: ssh-mobile-backend
-        image: localhost:5000/ssh-mobile-backend:latest
-        imagePullPolicy: Always
+        image: localhost:5000/ssh-mobile-backend:v1.0.0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3001
           protocol: TCP

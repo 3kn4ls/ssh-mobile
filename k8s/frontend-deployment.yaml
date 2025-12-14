@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: ssh-mobile-frontend
-        image: localhost:5000/ssh-mobile-frontend:latest
-        imagePullPolicy: Always
+        image: localhost:5000/ssh-mobile-frontend:v1.0.0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
           protocol: TCP
