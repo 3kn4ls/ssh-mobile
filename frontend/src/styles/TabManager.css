@@ -144,28 +144,6 @@
   border-top: 1px solid #444;
 }
 
-/* Indicador de scroll para móvil */
-.tabs-scroll::before,
-.tabs-scroll::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 20px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.tabs-scroll::before {
-  left: 0;
-  background: linear-gradient(to right, #2d2d2d, transparent);
-}
-
-.tabs-scroll::after {
-  right: 40px;
-  background: linear-gradient(to left, #2d2d2d, transparent);
-}
-
 /* Pantallas pequeñas */
 @media (max-width: 360px) {
   .tab {
