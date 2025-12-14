@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ssh-mobile-backend
+  labels:
+    app: ssh-mobile-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ssh-mobile-backend
+  template:
+    metadata:
+      labels:
+        app: ssh-mobile-backend
+    spec:
+      containers:
+      - name: ssh-mobile-backend
+        image: localhost:5000/ssh-mobile-backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3001
+          protocol: TCP
+        env:
+        - name: PORT
+          value: "3001"
+        - name: NODE_ENV
+          value: "production"
+        - name: SESSION_TIMEOUT
+          value: "1800000"
+        - name: MAX_RECONNECT_ATTEMPTS
+          value: "5"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3

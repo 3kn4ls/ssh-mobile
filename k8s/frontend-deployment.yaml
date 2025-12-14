@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ssh-mobile-frontend
+  labels:
+    app: ssh-mobile-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ssh-mobile-frontend
+  template:
+    metadata:
+      labels:
+        app: ssh-mobile-frontend
+    spec:
+      containers:
+      - name: ssh-mobile-frontend
+        image: localhost:5000/ssh-mobile-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 30
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3

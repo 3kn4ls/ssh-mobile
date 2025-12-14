@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ssh-mobile-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+  - hosts:
+    - northr3nd.duckdns.org
+    secretName: northr3nd-tls-cert
+  rules:
+  - host: northr3nd.duckdns.org
+    http:
+      paths:
+      # Frontend React App
+      - path: /ssh
+        pathType: Prefix
+        backend:
+          service:
+            name: ssh-mobile-frontend
+            port:
+              number: 80
+      # Backend WebSocket
+      - path: /ssh/ws
+        pathType: Prefix
+        backend:
+          service:
+            name: ssh-mobile-backend
+            port:
+              number: 3001
